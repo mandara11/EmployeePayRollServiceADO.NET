@@ -138,5 +138,33 @@ namespace EmployeePayRollServiceADO.NET
             }
             return true;
         }
+
+        //UC4:- Ability to update the salary i.e. the base pay for Employee.
+        public double UpdatedSalaryFromDatabase(string EmployeeName)
+        {
+
+            string cconnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=payroll_services;Integrated Security=True"; //Specifying the connection string from the sql server connection.
+
+            SqlConnection connection = new SqlConnection(cconnectionString);
+            try
+            {
+                using (connection)
+                {
+                    string query = @"select BasicPay from dbo.employee_payroll where EmployeeName=@inputEmployeeName";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    connection.Open();
+                    command.Parameters.AddWithValue("@inputEmployeeName", EmployeeName);
+                    return (double)command.ExecuteScalar();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }

@@ -25,6 +25,7 @@
             repo.AddEmployee(); //UC1
             repo.GetAllEmployees(); //UC2
             repo.UpdateBasicPay("Terisa", 3000000);//UC3 update BasicPay where name is Terisa table
+            repo.UpdatedSalaryFromDatabase("Terisa"); //UC4
         }
     }
 }
