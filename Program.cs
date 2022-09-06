@@ -28,7 +28,8 @@
             repo.UpdateBasicPay("Terisa", 3000000);//UC3 update BasicPay where name is Terisa table
             repo.UpdatedSalaryFromDatabase("Terisa"); //UC4
             repo.EmployeesFromForDateRange("2022-01-15");//UC5
-            repo.FindGroupedByGenderRecord("M");
+            repo.FindGroupedByGenderRecord("M");//UC6
+            repo.InsertIntoMultipleTablesWithTransactions();//UC7
         }
     }
 }

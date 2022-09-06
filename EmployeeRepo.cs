@@ -271,5 +271,128 @@ namespace EmployeePayRollServiceADO.NET
             }
 
         }
+
+        //UC7:- Ensure UC 2 – UC 7 works with the new ER Diagram implemented into Payroll Service DB
+        public void InsertIntoMultipleTablesWithTransactions()
+        {
+
+            Console.Write("Enter EmployeeID:- ");
+            int empID = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee Name:- ");
+            string empName = Console.ReadLine();
+
+            DateTime startDate = DateTime.Now;
+
+            Console.Write("Enter Employee Address:- ");
+            string address = Console.ReadLine();
+
+            Console.Write("Enter Employee Gender:- ");
+            string gender = Console.ReadLine();
+
+            Console.Write("Enter Employee PhoneNumber:- ");
+            double phonenumber = Convert.ToDouble(Console.ReadLine());
+
+            Console.Write("Enter Employee City:- ");
+            string city = Console.ReadLine();
+
+            Console.Write("Enter Employee Country:- ");
+            string country = Console.ReadLine();
+
+            Console.Write("Enter Employee BasicPay:- ");
+            int basicPay = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee Deductions:- ");
+            int deductions = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee TaxablePay:- ");
+            int taxablePay = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee IncomeTax:- ");
+            int tax = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee NetPay:- ");
+            int netPay = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee CompanyID:- ");
+            int companyId = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee CompanyName:- ");
+            string companyName = Console.ReadLine();
+
+            Console.Write("Enter Employee DepartmentID:- ");
+            int deptId = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Enter Employee Department Name:- ");
+            string deptName = Console.ReadLine();
+
+            using (connection)
+            {
+                connection.Open();
+
+                SqlTransaction sqlTran = connection.BeginTransaction(); // Start a local transaction.
+
+                SqlCommand command = connection.CreateCommand();  // Enlist a command in the current transaction.
+                command.Transaction = sqlTran;
+
+                try
+                {
+                    //company Table insert Record // Execute command
+                    command.CommandText = "insert into company values(@CompanyID,@CompanyName)";
+                    command.Parameters.AddWithValue("@CompanyID", companyId);
+                    command.Parameters.AddWithValue("@CompanyName", companyName);
+                    command.ExecuteScalar();
+
+                    // employee Table insert Record // Execute command
+                    command.CommandText = "insert into employee values(@EmployeeId,@EmployeeName,@Gender,@PhoneNumber,@Address,@StartDate,@City,@Country,@CompanyID)";
+                    command.Parameters.AddWithValue("@EmployeeId", empID);
+                    command.Parameters.AddWithValue("@EmployeeName", empName);
+                    command.Parameters.AddWithValue("@StartDate", startDate);
+                    command.Parameters.AddWithValue("@City", city);
+                    command.Parameters.AddWithValue("@Country", country);
+                    command.Parameters.AddWithValue("@Gender", gender);
+                    command.Parameters.AddWithValue("@PhoneNumber", phonenumber);
+                    command.Parameters.AddWithValue("@Address", address);
+                    command.ExecuteScalar();
+
+                    // payroll Table insert Record // Execute command
+                    command.CommandText = "insert into payroll values(@EmployeeId,@BasicPay,@Deductions,@TaxablePay,@IncomeTax,@NetPay)";
+                    command.Parameters.AddWithValue("@BasicPay", basicPay);
+                    command.Parameters.AddWithValue("@Deductions", deductions);
+                    command.Parameters.AddWithValue("@TaxablePay", taxablePay);
+                    command.Parameters.AddWithValue("@IncomeTax", tax);
+                    command.Parameters.AddWithValue("@NetPay", netPay);
+                    command.ExecuteScalar();
+
+                    // department Table insert Record // Execute command
+                    command.CommandText = "insert into department values(@DepartmentID,@DepartmentName)";
+                    command.Parameters.AddWithValue("@DepartmentID", deptId);
+                    command.Parameters.AddWithValue("@DepartmentName", deptName);
+                    command.ExecuteScalar();
+
+                    // employee_dept  Table insert Record // Execute command
+                    command.CommandText = "insert into employee_dept values(@EmployeeId,@DepartmentID)";
+                    command.ExecuteNonQuery();
+
+                    sqlTran.Commit(); // Commit the transaction after all commands.
+                    Console.WriteLine("All Records Added into The Database.");
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message); // Handle the exception if the transaction fails to commit.
+                    try
+                    {
+                        sqlTran.Rollback();
+                    }
+                    catch (Exception exRollback)
+                    {
+                        Console.WriteLine(exRollback.Message); // Throws an InvalidOperationException if the connection
+                                                               // is closed or the transaction has already been rolled
+                                                               // back on the server.
+                    }
+                }
+            }
+        }
     }
 }
