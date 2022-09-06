@@ -166,5 +166,63 @@ namespace EmployeePayRollServiceADO.NET
                 connection.Close();
             }
         }
+
+        /*UC5:- Ability to retrieve all employees who have joined in a particular data range from the
+                 payroll service database*/
+        public void EmployeesFromForDateRange(string Date)
+        {
+            EmployeeModel employeemodel = new EmployeeModel(); //Creating Employee model class object
+
+            try
+            {
+                using (connection)
+                {
+                    connection.Open(); //open connection
+                    string query = $@"select * from dbo.employee_payroll where StartDate between cast('{Date}' as date) and cast(getdate() as date)";
+                    SqlCommand command = new SqlCommand(query, connection); //accept query and connection
+
+                    SqlDataReader reader = command.ExecuteReader(); // Execute sqlDataReader to fetching all records
+
+                    if (reader.HasRows)     // Checking datareader has rows or not.               
+                    {
+                        // Console.WriteLine("EmployeeId, EmployeeName, PhoneNumber, Address, Department, Gender, BasicPay, Deductions, TaxablePay, TaxablePay, Tax, NetPay, StartDate, City, Country");                                            
+                        while (reader.Read()) //using while loop for read multiple rows.
+                        {
+                            employeemodel.EmployeeID = reader.GetInt32(0);
+                            employeemodel.EmployeeName = reader.GetString(1);
+                            employeemodel.PhoneNumber = reader.GetString(2);
+                            employeemodel.Address = reader.GetString(3);
+                            employeemodel.Department = reader.GetString(4);
+                            employeemodel.Gender = reader.GetChar(5);
+                            employeemodel.BasicPay = reader.GetDouble(6);
+                            employeemodel.Deductions = reader.GetDouble(7);
+                            employeemodel.TaxablePay = reader.GetDouble(8);
+                            employeemodel.Tax = reader.GetDouble(9);
+                            employeemodel.NetPay = reader.GetDouble(10);
+                            employeemodel.StartDate = reader.GetDateTime(11);
+                            employeemodel.City = reader.GetString(12);
+                            employeemodel.Country = reader.GetString(13);
+                            Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}", employeemodel.EmployeeID,
+                                employeemodel.EmployeeName, employeemodel.PhoneNumber, employeemodel.Address, employeemodel.Department,
+                                employeemodel.Gender, employeemodel.BasicPay, employeemodel.Deductions, employeemodel.TaxablePay,
+                                employeemodel.Tax, employeemodel.NetPay, employeemodel.StartDate, employeemodel.City, employeemodel.Country);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{Date} Record Not found on The Table "); //print 
+                    }
+                    reader.Close(); //close                   
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                this.connection.Close(); //Always ensuring the closing of the connection
+            }
+        }
     }
 }
