@@ -54,5 +54,59 @@ namespace EmployeePayRollServiceADO.NET
                 this.connection.Close();
             }
         }
+        // UC2:- Ability for Employee Payroll Service to retrieve the Employee Payroll from the Database.
+        public void GetAllEmployees(EmployeeModel employeeModel)
+        {
+            try
+            {
+                EmployeeModel employeeModel = new EmployeeModel(); //Creating Employeemodel class object
+                using (this.connection)
+                {
+                    string query = @"select EmployeeID,EmployeeName,PhoneNumber,Address,Department,Gender,BasicPay,Deductions,TaxablePay,Tax,NetPay,StartDate,City,Country";
+                    SqlCommand cmd = new SqlCommand(query, connection); //accept query and connection
+
+                    this.connection.Open();
+                    SqlDataReader dr = cmd.ExecuteReader(); // Execute sqlDataReader to fetching all records
+                    if (dr.HasRows) // Checking datareader has rows or not.
+                    {
+                        while (dr.Read()) //using while loop for read multiple rows.
+                        {
+                            employeeModel.EmployeeID = dr.GetInt32(0);
+                            employeeModel.EmployeeName = dr.GetString(1);
+                            employeeModel.PhoneNumber = dr.GetString(2);
+                            employeeModel.Address = dr.GetString(3);
+                            employeeModel.Department = dr.GetString(4);
+                            employeeModel.Gender = dr.GetChar(5);
+                            employeeModel.Deductions = dr.GetDouble(7);
+                            employeeModel.TaxablePay = dr.GetDouble(8);
+                            employeeModel.Tax = dr.GetDouble(9);
+                            employeeModel.NetPay = dr.GetDouble(10);
+                            employeeModel.StartDate = dr.GetDateTime(11);
+                            employeeModel.City = dr.GetString(12);
+                            employeeModel.Country = dr.GetString(13);
+
+                            Console.WriteLine(employeeModel.EmployeeID+" "+ employeeModel.EmployeeName);
+                            Console.WriteLine("-------------");
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data found");
+                    }
+                    dr.Close();
+
+                    this.connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close(); //Always ensuring the closing of the connection
+            }
+        }
     }
 }
