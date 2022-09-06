@@ -13,10 +13,11 @@ namespace EmployeePayRollServiceADO.NET
         SqlConnection connection = new SqlConnection(connectionstring);
 
         //UC1:- Ability to create a payroll service database and have C# program connect to database.
-        public bool AddEmployee(EmployeeModel employeeModel)
+        public bool AddEmployee()
         {
             try
             {
+                EmployeeModel employeeModel = new EmployeeModel();
                 using (this.connection)
                 {
                     SqlCommand command = new SqlCommand("SpAddEmployeeDetails", this.connection);
@@ -55,7 +56,7 @@ namespace EmployeePayRollServiceADO.NET
             }
         }
         // UC2:- Ability for Employee Payroll Service to retrieve the Employee Payroll from the Database.
-        public void GetAllEmployees(EmployeeModel employeeModel)
+        public void GetAllEmployees()
         {
             try
             {
@@ -107,6 +108,35 @@ namespace EmployeePayRollServiceADO.NET
             {
                 this.connection.Close(); //Always ensuring the closing of the connection
             }
+        }
+
+        //UC3:- Ability to update the salary i.e. the base pay for Employee 
+        public bool UpdateBasicPay(string EmployeeName, double BasicPay)
+        {
+            try
+            {
+                using (connection)
+                {
+                    connection.Open();
+                    string query = @"update dbo.employee_payroll set BasicPay=@inputBasicPay where EmployeeName=@inputEmployeeName";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@inputBasicPay", BasicPay); //parameters transact SQl stament or store procedure
+                    command.Parameters.AddWithValue("@inputEmployeeName", EmployeeName);
+                    var result = command.ExecuteNonQuery(); //ExecuteNonQuery and store result
+                    Console.WriteLine("Record Update Successfully");
+                    connection.Close();
+                    GetAllEmployees(); // call method and show record
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return true;
         }
     }
 }
