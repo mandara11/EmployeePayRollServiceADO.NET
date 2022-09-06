@@ -30,6 +30,7 @@
             repo.EmployeesFromForDateRange("2022-01-15");//UC5
             repo.FindGroupedByGenderRecord("M");//UC6
             repo.InsertIntoMultipleTablesWithTransactions();//UC7
+            repo.RetrieveEmployeeDetailsFromMultipleTables(); //UC8
         }
     }
 }
