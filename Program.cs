@@ -22,7 +22,8 @@
             employeeModel.City = "Banglore";
             employeeModel.Country = "India";
 
-            repo.AddEmployee(employeeModel);
-        }
+            repo.AddEmployee(employeeModel); //UC1
+            repo.GetAllEmployees(employeeModel); //UC2
+         }
     }
 }
