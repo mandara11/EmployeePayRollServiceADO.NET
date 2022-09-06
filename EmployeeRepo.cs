@@ -224,5 +224,52 @@ namespace EmployeePayRollServiceADO.NET
                 this.connection.Close(); //Always ensuring the closing of the connection
             }
         }
+
+        //UC6:- Ability to find sum, average, min, max and number of male and female employees.
+        public bool FindGroupedByGenderRecord(string Gender) //create method to find gender BasicPay min, max ...
+        {
+            try
+            {
+                using (connection)
+                {
+                    string query = @"select Gender,COUNT(BasicPay) as EmpCount, MIN(BasicPay) as MinBasicPay, MAX(BasicPay) 
+                                   as MaxBasicPay, SUM(BasicPay) as SumBasicPay,avg(BasicPay) as AvgBasicPay from dbo.employee_payroll
+                                   where Gender=@inputGender group by Gender";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@inputGender", Gender);//parameters transact SQl statement or store procedure
+                    connection.Open();  //open connection
+                    SqlDataReader reader = command.ExecuteReader();  // Execute sqlDataReader to fetching all records
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            int EmpCount = reader.GetInt32(1);  //Read EmpCount
+                            double MinBasicPay = reader.GetDouble(2); //Read MinBasicPay
+                            double MaxBasicPay = reader.GetDouble(3);
+                            double SumBasicPay = reader.GetDouble(4);
+                            double AvgBasicPay = reader.GetDouble(5);
+                            Console.WriteLine($"Gender:- {Gender}\nEmployee Count:- {EmpCount}\nMinimum BasicPay:-{MinBasicPay}\nMaximum BasicPay:- {MaxBasicPay}\n" +
+                                $"Total Salary for {Gender} :- {SumBasicPay}\n" + $"Average BasicPay:- {AvgBasicPay}");
+
+                        }
+                        connection.Close();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{Gender} Gender Record Not found From the Table");
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+        }
     }
 }

@@ -22,11 +22,13 @@
             employeeModel.City = "Banglore";
             employeeModel.Country = "India";
 
+
             repo.AddEmployee(); //UC1
             repo.GetAllEmployees(); //UC2
             repo.UpdateBasicPay("Terisa", 3000000);//UC3 update BasicPay where name is Terisa table
             repo.UpdatedSalaryFromDatabase("Terisa"); //UC4
-            repo.EmployeesFromForDateRange("2022-01-15");
+            repo.EmployeesFromForDateRange("2022-01-15");//UC5
+            repo.FindGroupedByGenderRecord("M");
         }
     }
 }
